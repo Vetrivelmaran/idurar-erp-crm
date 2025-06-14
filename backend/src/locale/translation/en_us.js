@@ -445,6 +445,7 @@ module.exports = {
   currencies: 'Currencies',
   payments_mode: 'Payments Mode',
   account_owner: 'Account Owner',
+  Query: 'Query',
   create_only: 'Create Only',
   enter_code: 'Enter Code',
   offers: 'Offers',
