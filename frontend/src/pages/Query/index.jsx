@@ -1,99 +1,77 @@
-import { useEffect, useState } from 'react';
-import { Table, Button, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { request } from '@/request';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { erp } from '@/redux/erp/actions';
+import CrudModule from '@/modules/CrudModule/CrudModule';
+import DynamicForm from '@/forms/DynamicForm';
+import { fields } from './config';
 import useLanguage from '@/locale/useLanguage';
 
-const { Option } = Select;
-
-export default function QueryPage() {
-  const entity = 'queries';
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+export default function Query() {
   const translate = useLanguage();
+  const entity = 'queries';
 
-  const [data, setData] = useState([]);
-  const [statusFilter, setStatusFilter] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const fetchData = async () => {
-    setLoading(true);
-    const res = await request.list({ entity });
-    if (res) {
-      setData(res);
-    }
-    setLoading(false);
+  const searchConfig = {
+    displayLabels: ['description'],
+    searchFields: 'description',
+    outputValue: '_id',
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const deleteModalLabels = ['description'];
 
-  const handleAdd = () => {
-    dispatch(erp.currentAction({ actionType: 'create' }));
-    navigate(`/${entity}/create`);
+  const Labels = {
+    PANEL_TITLE: translate('Query'),
+    DATATABLE_TITLE: translate('Query List'),
+    ADD_NEW_ENTITY: translate('Add new query'),
+    ENTITY_NAME: translate('Query'),
   };
 
-  const filteredData = statusFilter
-    ? data.filter((item) => item.status === statusFilter)
-    : data;
+  // ✅ Table columns for query module
+const dataTableColumns = [
+  {
+    title: 'Customer Name',
+    dataIndex: ['customer', 'name'],
+    render: (_, record) => (record.customer?.name ? record.customer.name : 'N/A'),
+  },
+  {
+    title: 'Description',
+    dataIndex: 'description',
+    render: (value) => value || '—',
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    render: (value) => value || '—',
+  },
+  {
+    title: 'Resolution',
+    dataIndex: 'resolution',
+    render: (value) =>
+      value?.length > 30 ? `${value.substring(0, 30)}...` : value || '—',
+  },
+  {
+    title: 'Created At',
+    dataIndex: 'createdAt',
+    render: (value) =>
+      value ? new Date(value).toLocaleDateString() : '—',
+  },
+];
 
-  const columns = [
-    {
-      title: 'Customer Name',
-      dataIndex: ['customer', 'name'],
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-    },
-    {
-      title: 'Created Date',
-      dataIndex: 'createdAt',
-      render: (value) => new Date(value).toLocaleDateString(),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-    },
-    {
-      title: 'Resolution',
-      dataIndex: 'resolution',
-      render: (value) =>
-        value?.length > 30 ? `${value.substring(0, 30)}...` : value,
-    },
-  ];
+
+  const configPage = {
+    entity,
+    ...Labels,
+  };
+
+  const config = {
+    ...configPage,
+    fields,
+    searchConfig,
+    deleteModalLabels,
+    dataTableColumns, // ✅ Add this line to enable table rendering
+  };
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <Select
-          placeholder="Filter by status"
-          onChange={setStatusFilter}
-          allowClear
-          style={{ width: 200 }}
-        >
-          <Option value="Open">Open</Option>
-          <Option value="InProgress">InProgress</Option>
-          <Option value="Closed">Closed</Option>
-        </Select>
-
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          Add Query
-        </Button>
-      </div>
-
-      <Table
-        dataSource={filteredData}
-        columns={columns}
-        rowKey="_id"
-        loading={loading}
-        pagination={{ pageSize: 10 }}
-        scroll={{ x: true }}
-      />
-    </div>
+    <CrudModule
+      createForm={<DynamicForm fields={fields} />}
+      updateForm={<DynamicForm fields={fields} isUpdateForm />}
+      config={config}
+    />
   );
 }
