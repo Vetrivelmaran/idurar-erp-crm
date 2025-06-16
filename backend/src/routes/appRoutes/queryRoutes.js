@@ -23,7 +23,7 @@ router.get("/list", async (req, res) => {
 
 
 // POST create query
-router.post("/create", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const query = new Query(req.body);
     await query.save();

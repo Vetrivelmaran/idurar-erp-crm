@@ -149,7 +149,6 @@ export default function DataTable({ config, extra = [] }) {
   const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
 
   const { pagination, items: dataSource } = listResult;
-  console.log('📦 DataSource:', dataSource);
 
   const dispatch = useDispatch();
 
