@@ -29,7 +29,6 @@ const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
 
-const Query = lazy(() => import('@/pages/Query'));
 let routes = {
   expense: [],
   default: [
@@ -78,10 +77,6 @@ let routes = {
       path: '/quote',
       element: <Quote />,
     },
-   {
-  path: '/query',
-  element: <Query />,
-},
     {
       path: '/quote/create',
       element: <QuoteCreate />,

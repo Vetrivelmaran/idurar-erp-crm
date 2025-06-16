@@ -2,25 +2,18 @@ const express = require("express");
 const router = express.Router();
 const Query = require("../../models/Query");
 
-
 // GET all queries with pagination
-router.get("/list", async (req, res) => {
-  try {
-    const queries = await Query.find()
-      .populate({
-        path: "customer",
-        select: "name",
-        options: { strictPopulate: false },
-      })
-      .exec();
+router.get("/", async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
 
-    res.status(200).json(queries);
-  } catch (error) {
-    console.error("❌ Error in GET /api/queries/list:", error.stack);
-    res.status(500).json({ error: "Failed to load queries" });
-  }
+  const queries = await Query.find()
+    .populate("customer", "name") // only get the name field
+    .skip((page - 1) * limit)
+    .limit(limit);
+  
+  res.json(queries);
 });
-
 
 // POST create query
 router.post("/", async (req, res) => {

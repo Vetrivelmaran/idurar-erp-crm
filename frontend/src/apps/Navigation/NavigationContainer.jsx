@@ -82,11 +82,6 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <WalletOutlined />,
     },
     {
-      key: 'query',
-      icon: <FilterOutlined />,
-      label: <Link to={'/query'}>{translate('queries')}</Link>,
-    },
-    {
       key: 'taxes',
       label: <Link to={'/taxes'}>{translate('taxes')}</Link>,
       icon: <ShopOutlined />,
